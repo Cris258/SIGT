@@ -1,2 +1,2 @@
-# SIGT---Sistema-Integral-de-Gesti-n-Total
+# SIGT
 Sistema Integral de Gestión Total
