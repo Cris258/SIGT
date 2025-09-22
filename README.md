@@ -49,7 +49,3 @@ VIBRA POSITIVA PIJAMAS carecia se un sistema inttegral que permitiera:
 - **Base de Datos:** MySQL
 
 
-Footer
-© 2025 GitHub, Inc.
-Footer navigation
-Terms
