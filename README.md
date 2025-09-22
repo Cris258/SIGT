@@ -47,9 +47,3 @@ VIBRA POSITIVA PIJAMAS carecia se un sistema inttegral que permitiera:
 - **Frontend:** React , Bootstrap 5, CSS
 - **Backend:** Node.js, 
 - **Base de Datos:** MySQL
-
-
-Footer
-© 2025 GitHub, Inc.
-Footer navigation
-Terms
