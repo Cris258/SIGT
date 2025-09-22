@@ -1,6 +1,5 @@
-# SIGT
-Sistema Integral de Gestión Total
 # PROYECTO-SIGT
+
 El Sistema Integral de Gestión Total (SIGT) es una plataforma diseñada para optimizar la administración de una distribuidora de pijamas, integrando en un solo sistema el control de productos, ventas, devoluciones y usuarios.
 
 Antes, los procesos se realizaban de manera manual y verbal, lo que generaba retrasos, duplicación de tareas y errores en la gestión. Con SIGT, la información se centraliza y se automatiza, permitiendo:
