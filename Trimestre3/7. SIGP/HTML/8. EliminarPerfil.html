@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eliminar Perfil</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <style>
+        body {
+          background-color: #c7e4fe;
+          margin: 0;
+          padding: 0;
+        }
+      </style>
+  <header>
+    <div class="header">
+        <div class="letter">Vibra Positiva Pijamas</div>
+    </div>
+  </header>
+  <h1>Eliminar Perfil del Empleado</h1>
+  <input type="checkbox" id="modal-toggle" class="modal-toggle">
+  <div class="modal">
+    <div class="modal-contenido">
+        <h2>ELIMINAR</h2>
+        <p><strong>¿Estas Seguro de Eliminar este Perfil?</strong></p>
+        <div class="buttons-row">
+            <label for="modal-toggle" class="login-btn">No</label>
+            <label for="modal-exito" class="login-btn">Sí</label>
+        </div>
+    </div>
+  </div>
+  <input type="checkbox" id="modal-exito" class="modal-exito-toggle">
+  <div class="modal modal-exito">
+    <div class="modal-contenido">
+      <h2>ELIMINAR</h2>
+      <p><strong>Perfil Eliminado con Exito</strong></p>
+      <div class="modal-buttons">
+        <a href="4. Administrador.html" class="login-btn">Volver</a>
+      </div>
+    </div>
+  </div>
+  <form class="password-form">
+    <div class="form-group">
+        <label for="nombre">Nombre del Empleado</label>
+        <input type="text" id="nombre" name="nombre">
+    </div>
+    <div class="form-group">
+        <label for="numDocumento">Numero Documento Empleado</label>
+        <input type="number" id="nombre" name="nombre">
+    </div>
+    <div class="form-group">
+        <label for="password">Contraseña Administrador</label>
+        <input type="password" id="password">
+    </div>
+        <div class="buttons-row">
+            <a href="4. Administrador.html" class="login-btn">Cancelar</a>
+            <label for="modal-toggle" class="login-btn">Eliminar</label>
+        </div>
+    </form>
+  <footer class="footer">
+    <div class="footer-contenedor">
+        <div class="footer-seccion">
+            <h3>Contacto</h3>
+            <p>📍 <strong>Dirección:</strong> Calle 2 Sur #10 - 39, Bogota, Colombia</p>
+            <p>📞 <strong>Teléfono:</strong> +57 305 7291000</p>
+        </div>
+        <div class="footer-seccion">
+            <h3>Síguenos</h3>
+            <a href="https://www.facebook.com/share/1P59bAoYSa/"><img src="img/face.png" alt="Facebook"></a>
+            <a href="https://www.instagram.com/vibrapositivapijamas?igsh=MXB6eGQzazE3eWFseQ=="><img src="img/ins.png" alt="Instagram"></a>
+        </div>
+    </div>
+    <div class="footer-derechos">
+        <p>© Vibra Positiva Pijamas - Todos los derechos reservados</p>
+    </div>
+   </footer>
+</body>
+</html>
