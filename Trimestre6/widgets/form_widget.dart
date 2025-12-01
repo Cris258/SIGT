@@ -36,8 +36,7 @@ class _FormWidgetState extends State<FormWidget> {
   }
 
   // Helper para mostrar el DatePicker y TimePicker
-  Future<void> _selectDateTime(
-      TextEditingController controller) async {
+  Future<void> _selectDateTime(TextEditingController controller) async {
     final date = await showDatePicker(
       context: context,
       firstDate: DateTime(2020),
@@ -81,17 +80,17 @@ class _FormWidgetState extends State<FormWidget> {
     }
 
     setState(() => _isLoading = true);
-    
+
     // 1. Crear el objeto Tarea con los datos del formulario
     final nuevaTarea = Tarea(
       descripcion: descripcionCtrl.text,
       // Usamos el texto como viene (Ej: 2025-11-23 10:30)
-      fechaAsignacion: fechaAsignacionCtrl.text, 
+      fechaAsignacion: fechaAsignacionCtrl.text,
       fechaLimite: fechaLimiteCtrl.text,
       estadoTarea: estadoTarea!, // Los marcamos como no nulos
       prioridad: prioridad!,
       // Intentamos convertir el número de documento a int para Persona_FK
-      personaFk: int.tryParse(documentoCtrl.text) ?? 0, 
+      personaFk: int.tryParse(documentoCtrl.text) ?? 0,
     );
 
     // 2. Llamar al servicio
@@ -151,7 +150,8 @@ class _FormWidgetState extends State<FormWidget> {
     const InputDecoration fieldDecoration = InputDecoration(
       hintStyle: TextStyle(fontSize: 14),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10)), // Bordes redondeados
+        borderRadius:
+            BorderRadius.all(Radius.circular(10)), // Bordes redondeados
         borderSide: BorderSide(color: Colors.grey, width: 0.5),
       ),
       enabledBorder: OutlineInputBorder(
@@ -160,12 +160,15 @@ class _FormWidgetState extends State<FormWidget> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        borderSide: BorderSide(color: Color(0xFFE91E63), width: 1.5), // Un color más vibrante al enfocar
+        borderSide: BorderSide(
+            color: Color(0xFFE91E63),
+            width: 1.5), // Un color más vibrante al enfocar
       ),
       filled: true,
       fillColor: Colors.white, // Asegurar que los campos de texto sean blancos
       contentPadding: EdgeInsets.all(16),
-      suffixIconColor: Colors.grey, // Añadido aquí para que aplique a todos los campos
+      suffixIconColor:
+          Colors.grey, // Añadido aquí para que aplique a todos los campos
     );
 
     return SingleChildScrollView(
@@ -193,9 +196,11 @@ class _FormWidgetState extends State<FormWidget> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: rosaBoton, // Color de fondo del botón
                   foregroundColor: colorTextoBoton, // Color del texto oscuro
-                  padding: const EdgeInsets.symmetric(vertical: 18), // Mayor padding para mejor tacto móvil
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 18), // Mayor padding para mejor tacto móvil
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12), // Bordes más redondeados
+                    borderRadius:
+                        BorderRadius.circular(12), // Bordes más redondeados
                   ),
                   textStyle: const TextStyle(
                     fontSize: 18,
@@ -232,7 +237,8 @@ class _FormWidgetState extends State<FormWidget> {
 
                   // ----- DESCRIPCIÓN -----
                   const Text("Descripción",
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: descripcionCtrl,
@@ -241,15 +247,15 @@ class _FormWidgetState extends State<FormWidget> {
                       hintText: "Ej: Revisar inventario de pijamas...",
                       contentPadding: const EdgeInsets.all(16),
                     ),
-                    validator: (value) => value!.isEmpty
-                        ? "La descripción es obligatoria"
-                        : null,
+                    validator: (value) =>
+                        value!.isEmpty ? "La descripción es obligatoria" : null,
                   ),
                   const SizedBox(height: 30),
 
                   // ----- FECHA ASIGNACIÓN -----
                   const Text("Fecha de Asignación",
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: fechaAsignacionCtrl,
@@ -265,7 +271,8 @@ class _FormWidgetState extends State<FormWidget> {
 
                   // ----- FECHA LÍMITE -----
                   const Text("Fecha Límite",
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: fechaLimiteCtrl,
@@ -281,7 +288,8 @@ class _FormWidgetState extends State<FormWidget> {
 
                   // ----- ESTADO -----
                   const Text("Estado de la Tarea",
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                   const SizedBox(height: 10),
                   DropdownButtonFormField<String>(
                     decoration: fieldDecoration,
@@ -302,7 +310,8 @@ class _FormWidgetState extends State<FormWidget> {
 
                   // ----- PRIORIDAD -----
                   const Text("Prioridad",
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                   const SizedBox(height: 10),
                   DropdownButtonFormField<String>(
                     decoration: fieldDecoration,
@@ -320,7 +329,8 @@ class _FormWidgetState extends State<FormWidget> {
 
                   // ----- DOCUMENTO (Persona_FK) -----
                   const Text("ID o Documento (Responsable)",
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: documentoCtrl,
@@ -342,13 +352,15 @@ class _FormWidgetState extends State<FormWidget> {
 
                   // ----- BOTÓN -----
                   ElevatedButton(
-                    onPressed: _isLoading ? null : _onSubmit, // Usa la función de envío
-                    child: _isLoading 
+                    onPressed: _isLoading
+                        ? null
+                        : _onSubmit, // Usa la función de envío
+                    child: _isLoading
                         ? const SizedBox(
-                            width: 24, 
-                            height: 24, 
+                            width: 24,
+                            height: 24,
                             child: CircularProgressIndicator(
-                              color: colorTextoBoton, 
+                              color: colorTextoBoton,
                               strokeWidth: 3,
                             ),
                           )
