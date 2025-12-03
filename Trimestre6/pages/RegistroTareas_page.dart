@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../widgets/header_widget.dart';
+
 import '../widgets/form_widget.dart';
 import '../widgets/footer_widget.dart';
-
+import '../widgets/header_widget.dart';
 class RegistroTareasPage extends StatelessWidget {
   const RegistroTareasPage({super.key});
 

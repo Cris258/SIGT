@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:front/pages/lista_empleados.dart';
+import 'package:front/pages/lista_tareas.dart';
+import 'package:front/pages/lista_usuarios.dart';
+import '../widgets/header_line.dart'; // Importar HeaderLine
+import '../widgets/footer_line.dart'; // Importar FooterLine
+import 'registro_usuarios.dart';
+import 'RegistroTareas_page.dart';
 import 'package:table_calendar/table_calendar.dart';
-// Importar tus modales
+import 'package:front/pages/admin_inventario_page.dart';
 import '../widgets/actualizar_datos_modal.dart';
 import '../widgets/cambiar_contraseña_modal.dart';
-
+import 'admin_clientes_page.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({Key? key}) : super(key: key);
@@ -18,100 +22,94 @@ class AdminPage extends StatefulWidget {
 
 class _AdminPageState extends State<AdminPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  
-  String? nombreUsuario;
-  String? apellidoUsuario;
-  List<dynamic> empleados = [];
-  List<dynamic> topEmpleados = [];
-  Map<String, dynamic>? estadisticas;
-  bool isLoading = true;
-  
-  // Variables para el calendario
+
+  String? nombreUsuario = "Administrador";
+
+  bool isLoading = false;
+  bool _initialLoading = true;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+
+  final List<dynamic> empleados = [
+    {
+      'ID': 1,
+      'Empleado': 'Juan Pérez',
+      'Rol': 'Desarrollador',
+      'TareasHechas': 8,
+      'Pendientes': 2,
+      'TotalTareas': 10,
+    },
+    {
+      'ID': 2,
+      'Empleado': 'Ana Gómez',
+      'Rol': 'Diseñadora',
+      'TareasHechas': 5,
+      'Pendientes': 5,
+      'TotalTareas': 10,
+    },
+    {
+      'ID': 3,
+      'Empleado': 'Carlos Ruiz',
+      'Rol': 'QA',
+      'TareasHechas': 10,
+      'Pendientes': 0,
+      'TotalTareas': 10,
+    },
+  ];
+
+  final List<dynamic> topEmpleados = [
+    {
+      'NombreEmpleado': 'Carlos Ruiz',
+      'NombreRol': 'QA',
+      'TareasCompletadas': 15,
+      'TareasEnProgreso': 2,
+      'TareasPendientes': 0,
+      'ScoreRendimiento': 98.5,
+    },
+    {
+      'NombreEmpleado': 'Juan Pérez',
+      'NombreRol': 'Desarrollador',
+      'TareasCompletadas': 12,
+      'TareasEnProgreso': 3,
+      'TareasPendientes': 1,
+      'ScoreRendimiento': 92.0,
+    },
+    {
+      'NombreEmpleado': 'Maria Lopez',
+      'NombreRol': 'Gerente',
+      'TareasCompletadas': 10,
+      'TareasEnProgreso': 5,
+      'TareasPendientes': 2,
+      'ScoreRendimiento': 88.0,
+    },
+  ];
+
+  final Map<String, dynamic> estadisticas = {
+    'general': [
+      {'EstadoTarea': 'Completada', 'Cantidad': 25},
+      {'EstadoTarea': 'En Progreso', 'Cantidad': 10},
+      {'EstadoTarea': 'Pendiente', 'Cantidad': 5},
+      {'EstadoTarea': 'Cancelada', 'Cantidad': 2},
+    ]
+  };
 
   @override
   void initState() {
     super.initState();
-    _cargarDatosUsuario();
-    _cargarDatos();
-  }
-
-  Future<void> _cargarDatosUsuario() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      nombreUsuario = prefs.getString('Primer_Nombre');
-      apellidoUsuario = prefs.getString('Primer_Apellido');
+    // Simular carga inicial
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _initialLoading = false;
+        });
+      }
     });
   }
 
-  Future<void> _cargarDatos() async {
+  void _simularRecarga() async {
     setState(() => isLoading = true);
-    
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
-
-      if (token == null) {
-        _mostrarError('Token no encontrado');
-        return;
-      }
-
-      const String apiUrl = 'http://localhost:3001/api';
-      final headers = {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      };
-
-      // Cargar empleados
-      final resEmpleados = await http.get(
-        Uri.parse('$apiUrl/empleados-tareas'),
-        headers: headers,
-      );
-
-      // Cargar top empleados
-      final resTop = await http.get(
-        Uri.parse('$apiUrl/top-empleados'),
-        headers: headers,
-      );
-
-      // Cargar estadísticas
-      final resStats = await http.get(
-        Uri.parse('$apiUrl/estadisticas'),
-        headers: headers,
-      );
-
-      if (resEmpleados.statusCode == 200) {
-        final dataEmpleados = json.decode(resEmpleados.body);
-        setState(() {
-          empleados = dataEmpleados['data'] ?? [];
-        });
-      }
-
-      if (resTop.statusCode == 200) {
-        final dataTop = json.decode(resTop.body);
-        setState(() {
-          topEmpleados = dataTop['data'] ?? [];
-        });
-      }
-
-      if (resStats.statusCode == 200) {
-        final dataStats = json.decode(resStats.body);
-        setState(() {
-          estadisticas = dataStats['data'];
-        });
-      }
-    } catch (e) {
-      _mostrarError('Error al cargar datos: $e');
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  void _mostrarError(String mensaje) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(mensaje)),
-    );
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() => isLoading = false);
   }
 
   int _calcularProgreso(int hechas, int total) {
@@ -141,22 +139,118 @@ class _AdminPageState extends State<AdminPage> {
     }
   }
 
+  void _handleLogout() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cerrar Sesión'),
+        content: const Text('¿Estás seguro que deseas cerrar sesión?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Navegar al login
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+            child: const Text('Cerrar Sesión'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_initialLoading) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFF800080),
+                const Color(0xFFE6C7F6),
+              ],
+            ),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 5,
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Cargando Panel de Administración...',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Por favor espera',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: const Text('Dashboard Administrador'),
-        backgroundColor: const Color(0xFFE6C7F6),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-        ),
+      body: Column(
+        children: [
+          // Header
+          HeaderLine(
+            onLogout: _handleLogout,
+          ),
+          
+          // AppBar debajo del header
+          Container(
+            color: const Color(0xFF800080),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                ),
+                const Text(
+                  'Panel de Administración',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Contenido principal
+          Expanded(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _buildContent(),
+          ),
+          
+          // Footer
+          const FooterLine(),
+        ],
       ),
       drawer: _buildDrawer(),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildContent(),
     );
   }
 
@@ -181,9 +275,7 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    nombreUsuario != null && apellidoUsuario != null
-                        ? '$nombreUsuario $apellidoUsuario'
-                        : 'Administrador',
+                    '$nombreUsuario',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -219,16 +311,22 @@ class _AdminPageState extends State<AdminPage> {
               icon: Icons.person_add,
               title: 'Registro de Usuarios',
               onTap: () {
-                Navigator.pop(context);
-                // Navegar a registro de usuarios
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const RegistroUsuarios()),
+                );
               },
             ),
             _buildDrawerItem(
-              icon: Icons.people,
+              icon: Icons.person_add,
               title: 'Listar Usuarios',
               onTap: () {
-                Navigator.pop(context);
-                // Navegar a listar usuarios
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ListaUsuarios()),
+                );
               },
             ),
             const Divider(color: Colors.white30, thickness: 1),
@@ -239,46 +337,60 @@ class _AdminPageState extends State<AdminPage> {
               selected: true,
             ),
             _buildDrawerItem(
-              icon: Icons.inventory,
-              title: 'Inventario',
+              icon: Icons.person_add,
+              title: ' Inventario',
               onTap: () {
-                Navigator.pop(context);
-                // Navegar a inventario
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AdminInventarioPage()),
+                );
               },
             ),
             _buildDrawerItem(
               icon: Icons.people_outline,
               title: 'Clientes',
               onTap: () {
-                Navigator.pop(context);
-                // Navegar a clientes
+                 Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  AdminClientesPage()),
+                );
+                
               },
             ),
-            const Divider(color: Colors.white30, thickness: 1),
             _buildDrawerItem(
-              icon: Icons.manage_accounts,
+              icon: Icons.person_add,
               title: 'Administrar Empleados',
               onTap: () {
-                Navigator.pop(context);
-                // Navegar a administrar empleados
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ListaEmpleados()),
+                );
               },
             ),
             _buildDrawerItem(
-              icon: Icons.assignment,
-              title: 'Asignar Tarea',
+              icon: Icons.person_add,
+              title: 'Asignar Tareas',
               onTap: () {
-                Navigator.pop(context);
-                // Navegar a asignar tarea
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const RegistroTareasPage()),
+                );
               },
             ),
             _buildDrawerItem(
-              icon: Icons.list_alt,
+              icon: Icons.person_add,
               title: 'Administrar Tareas',
               onTap: () {
-                Navigator.pop(context);
-                // Navegar a administrar tareas
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ListaTareas()),
+                );
               },
-            ),
+            ),  
           ],
         ),
       ),
@@ -292,13 +404,19 @@ class _AdminPageState extends State<AdminPage> {
     bool selected = false,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.white),
+      leading: Icon(
+        icon,
+        color: selected ? const Color(0xFF4A148C) : Colors.white,
+      ),
       title: Text(
         title,
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(
+          color: selected ? const Color(0xFF4A148C) : Colors.white,
+          fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+        ),
       ),
       selected: selected,
-      selectedTileColor: const Color(0xFFE6C7F6),
+      selectedTileColor: Colors.white.withOpacity(0.2),
       onTap: onTap,
     );
   }
@@ -348,7 +466,7 @@ class _AdminPageState extends State<AdminPage> {
                   ],
                 ),
                 ElevatedButton.icon(
-                  onPressed: _cargarDatos,
+                  onPressed: _simularRecarga,
                   icon: const Icon(Icons.refresh, size: 16),
                   label: const Text('Actualizar'),
                   style: ElevatedButton.styleFrom(
@@ -498,9 +616,7 @@ class _AdminPageState extends State<AdminPage> {
           ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: estadisticas == null ||
-                    estadisticas!['general'] == null ||
-                    (estadisticas!['general'] as List).isEmpty
+            child: (estadisticas['general'] as List).isEmpty
                 ? const Text('No hay tareas registradas')
                 : Column(
                     children: [
@@ -508,8 +624,8 @@ class _AdminPageState extends State<AdminPage> {
                         height: 200,
                         child: PieChart(
                           PieChartData(
-                            sections: (estadisticas!['general'] as List)
-                                .map((item) {
+                            sections:
+                                (estadisticas['general'] as List).map((item) {
                               return PieChartSectionData(
                                 value: (item['Cantidad'] ?? 0).toDouble(),
                                 title: '${item['Cantidad']}',
@@ -521,7 +637,7 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      ...(estadisticas!['general'] as List).map((item) {
+                      ...(estadisticas['general'] as List).map((item) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Row(
@@ -533,8 +649,8 @@ class _AdminPageState extends State<AdminPage> {
                                     width: 12,
                                     height: 12,
                                     decoration: BoxDecoration(
-                                      color: _getColorEstado(
-                                          item['EstadoTarea']),
+                                      color:
+                                          _getColorEstado(item['EstadoTarea']),
                                       shape: BoxShape.circle,
                                     ),
                                   ),
@@ -691,24 +807,24 @@ class _AdminPageState extends State<AdminPage> {
               },
               calendarFormat: CalendarFormat.month,
               locale: 'es_CO',
-              headerStyle: HeaderStyle(
+              headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
-                titleTextStyle: const TextStyle(
+                titleTextStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              calendarStyle: CalendarStyle(
+              calendarStyle: const CalendarStyle(
                 todayDecoration: BoxDecoration(
-                  color: const Color(0xFF7cbbe4),
+                  color: Color(0xFF7cbbe4),
                   shape: BoxShape.circle,
                 ),
                 selectedDecoration: BoxDecoration(
-                  color: const Color(0xFF4A148C),
+                  color: Color(0xFF4A148C),
                   shape: BoxShape.circle,
                 ),
-                weekendTextStyle: const TextStyle(color: Colors.red),
+                weekendTextStyle: TextStyle(color: Colors.red),
                 outsideDaysVisible: false,
               ),
               daysOfWeekStyle: const DaysOfWeekStyle(
