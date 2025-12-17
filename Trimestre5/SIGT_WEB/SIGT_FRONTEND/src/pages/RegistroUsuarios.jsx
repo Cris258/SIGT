@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FooterLine from "../components/FooterLine";
 import "../styles/styleRegistro.css";
 
-function Registro() {
+function RegistroUsuarios() {
   const [showPassword, setShowPassword] = useState(false);
+  const [roles, setRoles] = useState([]);
   const [formData, setFormData] = useState({
     NumeroDocumento: "",
     TipoDocumento: "",
@@ -14,7 +15,27 @@ function Registro() {
     Telefono: "",
     Correo: "",
     Password: "",
+    Rol_FK: "",
   });
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:3001/api/rol", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        setRoles(data.body);
+      } catch (error) {
+        console.error("Error al obtener roles:", error);
+      }
+    };
+    fetchRoles();
+  }, []);
 
   const togglePassword = () => {
     setShowPassword(!showPassword);
@@ -26,20 +47,23 @@ function Registro() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const envio = { ...formData };
+
     try {
-      const response = await fetch("http://localhost:3001/api/register", {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:3001/api/persona", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(envio),
       });
 
       const data = await response.json();
-
       if (response.ok) {
         alert("Registro exitoso ✅");
         console.log("Respuesta:", data);
-
-        // Limpiar los campos del formulario
         setFormData({
           NumeroDocumento: "",
           TipoDocumento: "",
@@ -50,6 +74,7 @@ function Registro() {
           Telefono: "",
           Correo: "",
           Password: "",
+          Rol_FK: "",
         });
       } else {
         alert("Error: " + (data.Message || "No se pudo registrar"));
@@ -59,6 +84,7 @@ function Registro() {
       alert("Error de conexión con el servidor ❌");
     }
   };
+
   return (
     <>
       <header className="py-3 shadow-sm merriweather-font">
@@ -77,7 +103,7 @@ function Registro() {
             </div>
             <nav className="menu col-auto d-flex flex-column flex-md-row align-items-center gap-1 gap-md-2">
               <a
-                href="/"
+                href="admin"
                 className="co1 d-flex align-items-center text-center text-black text-decoration-none"
               >
                 <div className="login d-flex align-items-center gap-1">
@@ -98,9 +124,9 @@ function Registro() {
             <div className="col-md-8 d-flex flex-column align-items-center justify-content-center my-5">
               <form onSubmit={handleSubmit}>
                 <p className="parrafo fs-5 text-black merriweather-font text-center">
-                  ¡Bienvenido a Vibra Positiva Pijamas!
+                  ¡Vibra Positiva Pijamas!
                   <br />
-                  Regístrate para formar parte de nuestro equipo.
+                  Regístra a una Persona para que forme parte de nuestro equipo.
                 </p>
 
                 {/* Número Documento */}
@@ -273,6 +299,32 @@ function Registro() {
                   </div>
                 </div>
 
+                {/* Rol */}
+                <div className="mb-3 text-start w-100">
+                  <label htmlFor="rol" className="form-label">
+                    Rol
+                  </label>
+                  <select
+                    className="form-select"
+                    id="rol"
+                    name="Rol_FK"
+                    required
+                    value={formData.Rol_FK}
+                    onChange={handleChange}
+                  >
+                    <option value="" disabled>
+                      Seleccione un rol
+                    </option>
+                    {roles
+                      .filter((rolItem) => rolItem.NombreRol !== "SuperAdmin")
+                      .map((rolItem) => (
+                        <option key={rolItem.idRol} value={rolItem.idRol}>
+                          {rolItem.NombreRol}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
                 {/* Botón */}
                 <div className="d-grid mt-5 ">
                   <button type="submit" className="boton">
@@ -294,4 +346,4 @@ function Registro() {
   );
 }
 
-export default Registro;
+export default RegistroUsuarios;
